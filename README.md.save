@@ -1,0 +1,143 @@
+# client-serveur
+
+DP serveur-client en C
+Il existe deux principaux protocoles de couche de transport permettant la communication entre les hôtes: TCP et UDP . Créer un serveur / client TCP a été discuté dans un précédent post .
+
+Condition préalable: création d'un serveur / client TCP
+
+Théorie 
+Dans UDP, le client ne forme pas de connexion avec le serveur comme dans TCP, mais envoie simplement un datagramme. De même, le serveur n'a pas besoin d'accepter une connexion et attend simplement que les datagrammes arrivent. Les datagrammes à l'arrivée contiennent l'adresse de l'expéditeur que le serveur utilise pour envoyer les données au bon client. 
+UDP Client/Server function calls
+
+L'ensemble du processus peut être décomposé en étapes suivantes: 
+Serveur UDP:
+
+Créer un socket UDP.
+Lier le socket à l'adresse du serveur.
+Attendez que le paquet de datagramme arrive du client.
+Traitez le paquet de datagramme et envoyez une réponse au client.
+Retournez à l'étape 3.
+Client UDP:
+
+
+
+Créer un socket UDP.
+Envoyer un message au serveur.
+Attendez que la réponse du serveur soit reçue.
+Traitez la réponse et revenez à l'étape 2, si nécessaire.
+Fermez le descripteur de socket et quittez.
+Fonctions nécessaires:
+
+  int socket (int domaine, type int, protocole int)
+ Crée un socket non lié dans le domaine spécifié.
+ Retourne le descripteur de fichier de socket.
+Arguments : 
+domain - Spécifie la communication 
+domaine (AF_INET pour IPv4 / AF_INET6 pour IPv6) 
+type - Type de socket à créer 
+(SOCK_STREAM pour TCP / SOCK_DGRAM pour UDP) 
+protocol - Protocole à utiliser par socket. 
+0 signifie utiliser le protocole par défaut pour la famille d'adresses.
+
+ int bind (int sockfd, struct struct sockaddr * addr, socklen_t addrlen)
+ Attribue une adresse à la prise non liée.
+Arguments : 
+sockfd - Descripteur de fichier de la socket à lier 
+addr - Structure dans laquelle l'adresse à associer est spécifiée 
+addrlen - Taille de la structure addr
+
+  ssize_t sendto (int sockfd, const void * buf, size_t len, int flags,
+                const struct sockaddr * dest_addr, socklen_t addrlen)
+ Envoyer un message sur le socket
+Arguments : 
+sockfd - Descripteur de fichier de socket 
+buf - Tampon d'application contenant les données à envoyer 
+len - Taille du tampon d' application buf 
+flags - OU bitwise des drapeaux pour modifier le comportement du socket 
+dest_addr - Structure contenant l'adresse de destination 
+addrlen - Taille de la structure dest_addr
+
+  ssize_t recvfrom (int sockfd, void * buf, size_t len, int flags,
+                  struct sockaddr * src_addr, socklen_t * addrlen)
+ Recevoir un message du socket.
+Arguments : 
+sockfd - Descripteur de fichier de socket 
+buf - Tampon d'application dans lequel recevoir des données 
+len - Taille du tampon d' application buf 
+flags - OU bitwise des drapeaux pour modifier le comportement du socket 
+src_addr - La structure contenant l'adresse source est renvoyée 
+addrlen - Variable dans laquelle la taille de la structure src_addr est renvoyée
+
+  int close (int fd)
+ Fermer un descripteur de fichier
+Arguments : 
+fd - Descripteur de fichier
+
+Dans le code ci-dessous, l'échange d'un message hello entre le serveur et le client est présenté pour illustrer le modèle.
+
+ // Server side implementation of UDP client-server model 
+ #include <stdio.h> 
+ #include <stdlib.h> 
+ #include <unistd.h> 
+ #include <string.h> 
+ #include <sys/types.h> 
+ #include <sys/socket.h> 
+ #include <arpa/inet.h> 
+ #include <netinet/in.h> 
+ 
+ #define PORT    8080 
+ #define MAXLINE 1024 
+ 
+ Créer un socket UDP.
+Envoyer un message au serveur.
+Attendez que la réponse du serveur soit reçue.
+Traitez la réponse et revenez à l'étape 2, si nécessaire.
+Fermez le descripteur de socket et quittez.
+Fonctions nécessaires:
+
+  int socket (int domaine, type int, protocole int)
+ Crée un socket non lié dans le domaine spécifié.
+ Retourne le descripteur de fichier de socket.
+Arguments : 
+domain - Spécifie la communication 
+domaine (AF_INET pour IPv4 / AF_INET6 pour IPv6) 
+type - Type de socket à créer 
+(SOCK_STREAM pour TCP / SOCK_DGRAM pour UDP) 
+protocol - Protocole à utiliser par socket. 
+0 signifie utiliser le protocole par défaut pour la famille d'adresses.
+
+ int bind (int sockfd, struct struct sockaddr * addr, socklen_t addrlen)
+ Attribue une adresse à la prise non liée.
+Arguments : 
+sockfd - Descripteur de fichier de la socket à lier 
+addr - Structure dans laquelle l'adresse à associer est spécifiée 
+addrlen - Taille de la structure addr
+
+  ssize_t sendto (int sockfd, const void * buf, size_t len, int flags,
+                const struct sockaddr * dest_addr, socklen_t addrlen)
+ Envoyer un message sur le socket
+Arguments : 
+sockfd - Descripteur de fichier de socket 
+buf - Tampon d'application contenant les données à envoyer 
+len - Taille du tampon d' application buf 
+flags - OU bitwise des drapeaux pour modifier le comportement du socket 
+dest_addr - Structure contenant l'adresse de destination 
+addrlen - Taille de la structure dest_addr
+
+  ssize_t recvfrom (int sockfd, void * buf, size_t len, int flags,
+                  struct sockaddr * src_addr, socklen_t * addrlen)
+ Recevoir un message du socket.
+Arguments : 
+sockfd - Descripteur de fichier de socket 
+buf - Tampon d'application dans lequel recevoir des données 
+len - Taille du tampon d' application buf 
+flags - OU bitwise des drapeaux pour modifier le comportement du socket 
+src_addr - La structure contenant l'adresse source est renvoyée 
+addrlen - Variable dans laquelle la taille de la structure src_addr est renvoyée
+
+  int close (int fd)
+ Fermer un descripteur de fichier
+Arguments : 
+fd - Descripteur de fichier
+
+Dans le code ci-dessous, l'échange d'un message hello entre le serveur et le client est présenté pour illustrer le modèle.
