@@ -27,10 +27,22 @@ protocol - Protocole à utiliser par socket.
 
 
 %%%%%%%%%% COMPILATION %%%%%%%%
+
 gcc client.c -o client
+
 ou
+
 gcc serveur.c -o serveur
 
+vous choisiriez le concepte de votre choix
+
 %%%%%%%%%%%% lancement %%%%%%%
+
 ./client
+
+ou
+
 ./serveur
+
+ce lancement depend du choix de votre compilation et doit etre exacte de celui-ci
+
