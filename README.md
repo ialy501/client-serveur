@@ -28,7 +28,7 @@ protocol - Protocole à utiliser par socket.
 
 %%%%%%%%%% COMPILATION %%%%%%%%
 
-gcc client.c -o client
+gcc client.c -o client( peut contenir maximum 5 client)
 
 ou
 

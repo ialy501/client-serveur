@@ -17,7 +17,6 @@ int main()
     int pid;
     int id;
     char msg[255];
-    char buffer[512];
 
     id=0;
     socklen_t len = sizeof(struct sockaddr_in); //déclaration d' une variable du type socklen_t qui contiendra la taille de la structure
@@ -74,19 +73,26 @@ int main()
             memset(msg, 0, 255);
             sprintf(msg,"bienvenu! client %i",id);
             send(connexion, msg, strlen(msg), 0);
-            FILE *fp;
-            int rpt = 0;
-            fp = fopen("fichier.txt","a");
-            int mot;
-            read(connexion, &mot, sizeof(int));
-            while(rpt != mot)
+            do
             {
-                read(connexion , buffer , 512); 
-                fprintf(fp , " %s" , buffer);   
-                rpt++;
+                memset(msg, 0, 255);
+                recv(connexion, msg, 255, 0);
+
+                if (strcmp(msg, "aurevoir") == 0)    //si le client ecrit aurevoir il est deconnecté du chat
+                {
+                    printf ("Connexion fermée pour le client %i\n",id);
+                    shutdown(socketID, SHUT_RDWR);
+                    exit (0);
+                }
+
+                printf ("client %d : %s\n",id,msg);
+                printf ("Réponse : ");
+                fgets(msg, 255, stdin);
+                msg[strlen(msg) - 1] = '\0';
+                send(connexion, msg, strlen(msg), 0);
+
             }
-            printf("Le fichier reçu \n");
-            printf("Le doc creer\n");
+            while(1);
         }
         else
         {

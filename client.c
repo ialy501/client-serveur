@@ -11,7 +11,7 @@ int main()
     pid_t pid;
     int id;
     char msg[255];//variable qui contiendrat les messages
-    char buffer[512];
+
     struct sockaddr_in informations;  //structure donnant les informations sur le serveur
 
     /*initialisation du protocole, TCP  l'adresse de connection 127.0.0.1 (en local) et du port du serveur (1400)*/
@@ -33,31 +33,27 @@ int main()
         exit (-1);
     }
 
-
-    memset(msg, 0, 255);
-    recv(socketID, msg, 255, 0);
-    printf ("%s\n", msg);
-    FILE *f;    
-    int mot = 0;
-    char c;
-    f=fopen("texte.txt","r");
-    while((c=getc(f))!=EOF)         
-    {   
-        fscanf(f , "%s" , buffer);
-        if(isspace(c)||c=='\t')
-        mot++;    
-    }             
-    write(socketID, &mot, sizeof(int));
-       rewind(f);
-    char ch ;
-    while(ch != EOF)
+    if (strcmp(msg, "aurevoir") != 0)
     {
-        fscanf(f , "%s" , buffer);
-        write(socketID,buffer,512);
-        ch = fgetc(f);
-    }    
-    printf("Le fichier est envoyer avec succès\n");
-    
+        memset(msg, 0, 255);
+        recv(socketID, msg, 255, 0);
+        printf ("%s\n", msg);
+    }
+
+    do
+    {
+        id+=1;
+        printf ("moi : ");
+        fgets(msg, 255, stdin);// le client ecrit son message
+        msg[strlen(msg) - 1] = '\0';
+
+        if ((send(socketID, msg, strlen(msg), 0)) == -1)
+            perror("send");
+        recv(socketID, msg, 255, 0);
+        printf ("Phrase reçue : %s\n", msg);
+
+    }
+    while (strcmp(msg, "aurevoir") != 0);    // tant que le client n'envoie pas "aurevoir" la conversation n'est pas fini
 
     shutdown(socketID, SHUT_RDWR);// fermeture du socket
 
